@@ -1,0 +1,1 @@
+I am creating this project to be able to understand the working and the technologies related to the development of website using MERN stack.
