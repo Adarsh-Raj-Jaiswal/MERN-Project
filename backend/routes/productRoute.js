@@ -11,11 +11,11 @@ const { getAllProducts, createProduct } = require('../controllers/productControl
 const router = express.Router();
 
 router.route('/Products') // defining routes for /Products path
-    .get(getAllProducts); // defining a route for the GET HTTP method
+    .get(getAllProducts); // defining a route for the GET HTTP method providing getAllProducts as callback function
 
 
 router.route('/Products/new') // defining routes for /Products/new path
-    .post(createProduct); // defining a route for the POST HTTP method
+    .post(createProduct); // defining a route for the POST HTTP method providing createProduct as callback function
 
 // exporting the router object
 module.exports = router;
