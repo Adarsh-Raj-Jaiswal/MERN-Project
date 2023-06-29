@@ -3,7 +3,12 @@
 // importing the exports from the app.js module
 const app = require('./app');
 
-
+// Handling Uncaught Exceptions
+process.on('uncaughtException', err => {
+    console.log(`Error: ${err.message}`);
+    console.log('Shutting down the server due to Uncaught Exception');
+    process.exit(1);
+})
 
 // this is for dotenv which is used to access the config.env file
 const dotenv = require('dotenv');
@@ -23,6 +28,17 @@ connectDatabase(); // calling function to create connection
 
 
 // this method is used to start the server
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
     console.log(`Server working on http://localhost:${process.env.PORT}`);
+});
+
+// Unhandled Promise Rejection
+process.on('unhandledRejection', err => {
+    console.log(`Error: ${err.message}`);
+    console.log('Shutting down the server due to Unhandled Promise Rejection');
+
+    server.close(() => {
+        process.exit(1);
+    });
+
 });

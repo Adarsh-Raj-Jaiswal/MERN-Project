@@ -13,11 +13,6 @@ const connectDatabase = () => {
             (data) => { // data represents the connection object
                 console.log(`Mongodb connected with server:${data.connection.host}`);
             }
-        )
-        .catch( // if there is an error
-            (err) => {
-                console.log(err);
-            }
         );
 }
 
