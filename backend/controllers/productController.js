@@ -1,7 +1,7 @@
 const Product = require('../models/productModel') // importing the product model
 const ErrorHandler = require('../utils/errorHandler')
 const catchAsyncErrors = require('../middleware/catchAsyncErrors')
-
+const ApiFeatures = require('../utils/apiFeatures')
 
 // create product -- Admin
 
@@ -29,12 +29,20 @@ exports.createProduct = catchAsyncErrors(
 exports.getAllProducts = catchAsyncErrors(
     async (req, res) => {
 
-        const products = await Product.find(); // the find method retreive documents from the database matching certain criteria, but in this case it will return all the documents(all the products)
+        const resultPerPage = 5;
+        const productCount = await Product.countDocuments();
+        const apiFeatute = new ApiFeatures(Product.find(), req.query)
+            .search()
+            .filter()
+            .pagenation(resultPerPage);
+
+        const products = await apiFeatute.query; // the find method retreive documents from the database matching certain criteria, but in this case it will return all the documents(all the products)
 
         // sending status 200 (ok) and json response
         res.status(200).json({
             success: true,
-            products
+            products,
+            productCount
         });
     }
 );
