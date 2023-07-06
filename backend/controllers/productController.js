@@ -9,8 +9,9 @@ const ApiFeatures = require('../utils/apiFeatures')
 exports.createProduct = catchAsyncErrors(
     async (req, res, next) => {
 
-        const product = await Product.create(req.body); // calling the create method (a asynchronous method)of 'Product' model to create new document with the data of req.body (new document matlab ek nayi entry database mai product ki)
+        req.body.user = req.user.id;
 
+        const product = await Product.create(req.body); // calling the create method (a asynchronous method)of 'Product' model to create new document with the data of req.body (new document matlab ek nayi entry database mai product ki)
 
         res
             .status(201) // setting status code 201(created)
