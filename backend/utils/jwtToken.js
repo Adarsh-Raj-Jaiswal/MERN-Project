@@ -1,6 +1,6 @@
-// creating token and saving in cookie
+// this function creates token and save it in the cookie
 const sendToken = (user, statusCode, res) => {
-    const token = user.getJWTToken();
+    const token = user.getJWTToken(); // getting the token
 
     // options for cookie
     const options = {
@@ -9,6 +9,8 @@ const sendToken = (user, statusCode, res) => {
         ),
         httpOnly: true,
     };
+
+    // sending response with json data and adding cookie
     res.status(statusCode).cookie('token', token, options).json({
         success: true,
         user,
@@ -16,5 +18,5 @@ const sendToken = (user, statusCode, res) => {
     });
 };
 
-
+// exporting
 module.exports = sendToken;

@@ -1,9 +1,12 @@
+// this file is used to define the model for user
+
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto'); // built in module no need to install additionally
 
+// creating schema for user
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -15,6 +18,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter your email"],
         unique: true,
+        // using validator to validate the email
         validate: [validator.isEmail, "Please enter a valid email"]
     },
     password: {
@@ -41,21 +45,36 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpire: Date,
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save',// defines a pre-hook for the 'save' event in the userSchema.
 
-    // only hash if password is modified
-    if (!this.isModified('password')) {
-        next();
-    }
-    this.password = await bcrypt.hash(this.password, 10);
-});
+    // this callback function will be called before every save event in the document
+    async function (next) {
 
+        // donot hash password if password is not modified
+        if (!this.isModified('password')) {
+            next();
+        }
+        // hashing the modified password (we do not store the password we hash it and then store)
+        this.password = await bcrypt.hash(this.password, 10);
+    });
+
+
+// userSchema.methods is used to define instance methods for the document. Inside the method, this refers to the document instance itself. Note that instance methods defined using methods are not available on the model itself or as static methods.
 
 //JWT TOKEN
 userSchema.methods.getJWTToken = function () {
+
+    // this method is used to generate a json web token
     return jwt.sign(
+        //The jwt.sign() function returns a JWT as a string. The generated token is a compact string representation that consists of three parts: the header, payload, and signature. The token can be used to authenticate and authorize requests from clients.
+
+        // payload (This is an object containing the data you want to include in the JWT)
         { id: this._id },
+
+        // secretKey(This is a secret or private key used to sign the JWT.)
         process.env.JWT_SECRET,
+
+        // options
         {
             expiresIn: process.env.JWT_EXPIRE,
         }
@@ -64,6 +83,8 @@ userSchema.methods.getJWTToken = function () {
 
 // Compare Password
 userSchema.methods.comparePassword = async function (enteredPassword) {
+
+    // this method is used to compare the entered password with the hashed password of the document
     return await bcrypt.compare(enteredPassword, this.password);
 }
 
@@ -77,8 +98,7 @@ userSchema.methods.getResetPasswordToken = function () {
     this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
     this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
-
     return resetToken;
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema); // creating 'User' model with 'userSchema' schema
