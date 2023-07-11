@@ -73,7 +73,7 @@ const productSchema = new mongoose.Schema( // this function is used to create a 
         ],
         user: {
             type: mongoose.Schema.ObjectId,
-            ref: 'User',
+            ref: 'User',// This line defines the reference to another Mongoose model. In this case, it's specifying that the user property references the 'User' model. This means that the value stored in the user property will be an ObjectId that corresponds to a document in the 'User' collection.
             required: true,
         },
         createdAt: {
